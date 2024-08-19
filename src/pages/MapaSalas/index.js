@@ -5,23 +5,42 @@ import CardSala from "../../components/CardSala";
 import Nav from "../../components/Nav";
 import { ClassMap } from "../../controllers/horarios";
 import { useState } from "react";
+import { useQuery } from "react-query";
+import { getClassroom } from "../../api/classroom/getClassroom";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 function MapaSalas() {
-  const classMap = new ClassMap()
+  const navigate = useNavigate();
+  const token = Cookies.get("token");
+  const classMap = new ClassMap();
+
   const state = {
     block: "p",
     day: "segunda",
     period: "m1",
-  }
-  const [classes, classesState] = useState(classMap.getFilteredClasses("segunda", "m1", "p"))
+  };
 
+  const { data } = useQuery({
+    queryKey: "getClassroom",
+    queryFn: () => getClassroom(token),
+  });
+
+  const [classes, classesState] = useState(
+    classMap.getFilteredClasses("segunda", "m1", "p")
+  );
+  const handleClick = (id) => {
+    navigate(`/horarios/:${id}`);
+  };
   return (
     <div className="nav-container">
       <Nav />
       <div className="mapa-salas">
         <div className="titulo-subtitulo">
           <Titulo>Mapa de salas</Titulo>
-          <Subtitulo>Consulte o status das salas utilizadas pelos cursos do DACOM</Subtitulo>
+          <Subtitulo>
+            Consulte o status das salas utilizadas pelos cursos do DACOM
+          </Subtitulo>
         </div>
 
         <form>
@@ -68,13 +87,24 @@ function MapaSalas() {
               <option value="n5">N5</option>
             </select>
           </div>
-
         </form>
 
         <div className="caixa-salas">
           <h4>Selecione uma sala para checar seus Horários</h4>
           <div className="salas">
-            {classes.map((c, i) => <CardSala key={i} sala={c.classroom.getNumber()} disciplina={c.class.getClassCode()} docente={c.class.getProfessor()} alunos={c.class.getStudents()} turma={c.class.getCode()} status="Em uso"></CardSala>)}
+            {data?.map((c, i) => (
+              <div key={c.id} onClick={() => handleClick(c.name)}>
+                <CardSala
+                  key={c.id}
+                  sala={c.name}
+                  capacidade={c.capacity}
+                  //disciplina={c.class.getClassCode()}
+                  //docente={c.class.getProfessor()}
+                  //alunos={c.class.getStudents()}
+                  //status="Em uso"
+                ></CardSala>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -90,22 +120,25 @@ function MapaSalas() {
         </div>
       </div>
     </div>
-  )
+  );
 
   function handleBlockState(e) {
-    state.block = e.target.value
-    filterClasses()
+    state.block = e.target.value;
+    filterClasses();
   }
   function handleDayState(e) {
-    state.day = e.target.value
-    filterClasses()
+    state.day = e.target.value;
+    filterClasses();
   }
   function handlePeriodState(e) {
-    state.period = e.target.value
-    filterClasses()
+    state.period = e.target.value;
+    filterClasses();
   }
   function filterClasses() {
-    classesState(s => s = classMap.getFilteredClasses(state.day, state.period, state.block))
+    classesState(
+      (s) =>
+        (s = classMap.getFilteredClasses(state.day, state.period, state.block))
+    );
   }
 }
 

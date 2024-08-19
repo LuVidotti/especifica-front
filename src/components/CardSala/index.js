@@ -28,6 +28,7 @@ function CardSala({
         <div>Capacidade: {capacidade}</div>
       </div>
 
+      {/*
       <div className="sala-info">
         <div className="sala-info__div sala-info__left">
           <p>
@@ -49,6 +50,7 @@ function CardSala({
           </p>
         </div>
       </div>
+      */}
     </div>
   );
 }
