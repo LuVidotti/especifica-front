@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
 
 const AuthenticationContext = createContext();
 
@@ -49,7 +48,7 @@ export const AuthenticationProvider = ({ children }) => {
     Cookies.remove("username");
     Cookies.remove("token");
     setIsAuthenticated(false);
-    navigate("/")
+    navigate("/");
   };
 
   return (

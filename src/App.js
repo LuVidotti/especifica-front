@@ -22,7 +22,7 @@ function App() {
     if (token) {
       setIsAuthenticated(true);
     }
-  }, []);
+  }, [setIsAuthenticated]);
 
   return (
     <BrowserRouter>
@@ -33,6 +33,7 @@ function App() {
           <Route path="/mapa-de-salas" Component={MapaSalas} />
           <Route path="/mapa-de-professores" Component={MapaProfessores} />
           <Route path="/horarios" Component={Horarios} />
+          <Route path="/horarios/:id" Component={Horarios} />
           <Route path="/relatorios" Component={Relatorios} />
           <Route path="/configuracoes" Component={Configuracoes} />
           <Route path="/notificacoes" Component={Notificacoes} />
